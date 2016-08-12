@@ -62,18 +62,34 @@
 		14D9799C1D5E5D8200ECD841 /* CatInc */ = {
 			isa = PBXGroup;
 			children = (
-				14D979B51D5E5F2500ECD841 /* Assets.xcassets */,
-				14D979B71D5E602500ECD841 /* Tiles.sks */,
-				14D9799D1D5E5D8200ECD841 /* AppDelegate.swift */,
-				14D9799F1D5E5D8200ECD841 /* GameScene.sks */,
-				14D979A11D5E5D8200ECD841 /* Actions.sks */,
 				14D979A31D5E5D8200ECD841 /* GameScene.swift */,
 				14D979A51D5E5D8200ECD841 /* GameViewController.swift */,
+				14D979B91D5E7F9700ECD841 /* SpriteKit Specific */,
+				14D979BA1D5E7FA800ECD841 /* Supporting Files */,
+			);
+			path = CatInc;
+			sourceTree = "<group>";
+		};
+		14D979B91D5E7F9700ECD841 /* SpriteKit Specific */ = {
+			isa = PBXGroup;
+			children = (
+				14D979B71D5E602500ECD841 /* Tiles.sks */,
+				14D9799F1D5E5D8200ECD841 /* GameScene.sks */,
+				14D979A11D5E5D8200ECD841 /* Actions.sks */,
+			);
+			name = "SpriteKit Specific";
+			sourceTree = "<group>";
+		};
+		14D979BA1D5E7FA800ECD841 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				14D979B51D5E5F2500ECD841 /* Assets.xcassets */,
+				14D9799D1D5E5D8200ECD841 /* AppDelegate.swift */,
 				14D979A71D5E5D8200ECD841 /* Main.storyboard */,
 				14D979AC1D5E5D8200ECD841 /* LaunchScreen.storyboard */,
 				14D979AF1D5E5D8300ECD841 /* Info.plist */,
 			);
-			path = CatInc;
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
