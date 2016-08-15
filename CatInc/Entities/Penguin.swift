@@ -9,8 +9,23 @@
 import SpriteKit
 import GameplayKit
 
-internal class Penguin: GKEntity {
-  internal let penguinTexture: SKTexture  = SKTexture(imageNamed: "penguin")
+
+internal protocol Spawnable {
+  var texture: SKTexture { get }
+  func spriteNode() -> SKSpriteNode
+  func move(to point: CGPoint)
+}
+
+extension Spawnable {
+  func move(to point: CGPoint) {
+    print("position: \(point)")
+    let sprite = self.spriteNode()
+    sprite.position = point
+  }
+}
+
+internal class Penguin: GKEntity, Spawnable {
+  internal var texture: SKTexture = SKTexture(imageNamed: "penguin")
   
   internal convenience init(position: CGPoint) {
     self.init()
@@ -19,7 +34,7 @@ internal class Penguin: GKEntity {
   
   internal override init() {
     super.init()
-    self.addComponent(SpriteComponent(texture: self.penguinTexture))
+    self.addComponent(SpriteComponent(texture: self.texture))
   }
   
   required init?(coder aDecoder: NSCoder) {
@@ -29,24 +44,28 @@ internal class Penguin: GKEntity {
   internal func spriteNode() -> SKSpriteNode {
     return self.componentForClass(SpriteComponent.self)!.node
   }
-  
-  internal func move(to point: CGPoint) {
-    let sprite = self.spriteNode()
-    print("position: \(point)")
-    sprite.position = point
-  }
-  
+
 }
 
-class SpriteComponent: GKComponent {
-  let node: SKSpriteNode
+internal class SpawnPoint: GKEntity, Spawnable {
+  internal var texture: SKTexture = SKTexture(imageNamed: "spawn")
   
-  init(texture: SKTexture, color: SKColor = SKColor.white(), size: CGFloat = StandardSizeCGFloat) {
-    node = SKSpriteNode(texture: texture, color: color, size: CGSize(width: size, height: size))
+  internal convenience init(position: CGPoint) {
+    self.init()
+    self.move(to: position)
+  }
+  
+  internal override init() {
     super.init()
+    self.addComponent(SpriteComponent(texture: self.texture))
   }
   
   required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
+      fatalError("init(coder:) has not been implemented")
   }
+  
+  internal func spriteNode() -> SKSpriteNode {
+    return self.componentForClass(SpriteComponent.self)!.node
+  }
+
 }

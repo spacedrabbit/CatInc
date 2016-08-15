@@ -20,11 +20,10 @@ class GameScene: SKScene {
   
   var castleNode: SKNode!
   var spawnNode: SKNode!
-  var penguinPath: GKGridGraph<GKGridGraphNode>?
-  var penguinAllowedPath: [GKGridGraphNode]?
-  var fullTileNode: SKTileMapNode?
-  
+
   let penguin: SKSpriteNode = SKSpriteNode(texture: SKTexture(imageNamed: "penguin"))
+  var passableTerrainNode: SKTileMapNode?
+  var passableTerrainIndicies: [int2] = []
   
   override func sceneDidLoad() {
     
@@ -34,73 +33,17 @@ class GameScene: SKScene {
     self.castleNode = self.childNode(withName: "castleNode")
     self.spawnNode = self.childNode(withName: "spawnNode")
     
-    if let validRoadTiles = self.childNode(withName: "/Grass Node/Road") as? SKTileMapNode {
-      let cols = Int32(validRoadTiles.numberOfColumns)
-      let rows = Int32(validRoadTiles.numberOfRows)
-      self.fullTileNode = validRoadTiles
+    let mapper = MapManager(with: self)
+    let terrainHelper = TerrainInspector(with: mapper)
+    
+    if let validRoadTiles = mapper.passableTerrainNode {
+      self.passableTerrainNode = validRoadTiles
       
-      var validPath: [GKGridGraphNode] = []
-//      var validGridGraph: GKGridGraph<GKGridGraphNode>?
-      for c in 0..<cols {
-        for r in 0..<rows {
-          if let _ = validRoadTiles.tileGroup(atColumn: Int(c), row: Int(r)) { // valid graph nodes
-            validPath.append(GKGridGraphNode(gridPosition: vector_int2(c, r)))
-          }
-        }
-      }
-      
-      if validPath.count > 0 {
-        self.penguinAllowedPath = validPath
-        self.penguinPath = GKGridGraph(fromGridStartingAt: int2(0,0), width: cols, height: rows, diagonalsAllowed: false, nodeClass: GKGridGraphNode.self)
+      let pathTiles = terrainHelper.getPassableTerrainIndicies()
+      if pathTiles.count > 0 {
+        self.passableTerrainIndicies = pathTiles
       }
     }
-    
-    // locating valid road tiles that penguins are allowed to walk over
-    /*
-    if let grassTiles = self.childNode(withName: "Grass Node") as? SKTileMapNode {
-      if let roadTiles = grassTiles.childNode(withName: "Road") as? SKTileMapNode {
-        let cols = roadTiles.numberOfColumns
-        let rows = roadTiles.numberOfRows
-        
-        var allTiles: [SKTileGroup] = []
-        var mapPositions: [CGVector] = []
-        var mappedDict: Dictionary<SKTileGroup, CGVector> = [:]
-        // this dict isn't working as intended. seems that the roadtile
-        
-        // iterrate over cols and rows
-        for c in 0..<cols {
-          for r in 0..<rows {
-            
-            // a non-nil value indicates the road exists
-            if let validRoadTile = roadTiles.tileGroup(atColumn: c, row: r) {
-              print("Valid road tile: \(validRoadTile)")
-              // as suspected, despite having knowledge of a separate index, each SKTileGroup has the same memory address so it's not going to work on indexing by the object 
-              // I suppose this is due to the optimizations that SceneKit makes behind the scenes to speed up drawing
-              // Moreover, CGVector does not conform to hashable so that cannot be used as a key either
-              
-              let mPos = CGVector(dx: c, dy: r)
-  
-              allTiles.append(validRoadTile)
-              mapPositions.append(mPos)
-              mappedDict.updateValue(mPos, forKey: validRoadTile)
-            }
-          }
-        }
-        
-        for (key, value) in mappedDict {
-          print("Node: \(key)          Position: \(value)")
-        }
-      }
-    }
-    */
-//    if let castle: SKNode = self.childNode(withName: "castleNode") {
-//      print("\n\n\nfound castle: \(castle)\n\n\n")
-//    }
-//    
-//    if let spawn: SKNode = self.childNode(withName: "spawnNode") {
-//      print("\n\n\nfound spawn: \(spawn)\n\n\n")
-//    }
-    
   }
   
   func createSpinnyNode() {
@@ -174,15 +117,13 @@ class GameScene: SKScene {
         
         // create the penguin
         let penguinSpawnPosition = CGPoint(
-          x: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.penguinPath!.gridWidth),
-          y: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.penguinPath!.gridHeight)
+          x: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.passableTerrainNode!.numberOfColumns),
+          y: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.passableTerrainNode!.numberOfRows)
         )
         
-        let spawnNodePosition = self.fullTileNode?.centerOfTile(atColumn: Int(penguinSpawnPosition.x), row: Int(penguinSpawnPosition.y))
-        let newPenguin = Penguin(position: spawnNodePosition!)
+        let spawnNodePosition = self.passableTerrainNode!.centerOfTile(atColumn: Int(penguinSpawnPosition.x), row: Int(penguinSpawnPosition.y))
+        let newPenguin = Penguin(position: spawnNodePosition)
         self.addChild(newPenguin.spriteNode())
-        
-        
       }
       
 //      for n in self.nodes(at: tappedLocation) {

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		14C6C64C1D623F0D000474E1 /* Penguin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C6C64B1D623F0D000474E1 /* Penguin.swift */; };
 		14C6C64E1D62436C000474E1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C6C64D1D62436C000474E1 /* Constants.swift */; };
+		14C6C6521D6248F3000474E1 /* SpriteComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C6C6511D6248F3000474E1 /* SpriteComponent.swift */; };
+		14C6C6551D624EFA000474E1 /* MapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C6C6541D624EFA000474E1 /* MapManager.swift */; };
 		14D9799E1D5E5D8200ECD841 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D9799D1D5E5D8200ECD841 /* AppDelegate.swift */; };
 		14D979A01D5E5D8200ECD841 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 14D9799F1D5E5D8200ECD841 /* GameScene.sks */; };
 		14D979A21D5E5D8200ECD841 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 14D979A11D5E5D8200ECD841 /* Actions.sks */; };
@@ -23,6 +25,8 @@
 /* Begin PBXFileReference section */
 		14C6C64B1D623F0D000474E1 /* Penguin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Penguin.swift; path = Entities/Penguin.swift; sourceTree = "<group>"; };
 		14C6C64D1D62436C000474E1 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = Common/Constants.swift; sourceTree = "<group>"; };
+		14C6C6511D6248F3000474E1 /* SpriteComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteComponent.swift; sourceTree = "<group>"; };
+		14C6C6541D624EFA000474E1 /* MapManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapManager.swift; path = Common/MapManager.swift; sourceTree = "<group>"; };
 		14D9799A1D5E5D8200ECD841 /* CatInc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CatInc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		14D9799D1D5E5D8200ECD841 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		14D9799F1D5E5D8200ECD841 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -58,9 +62,18 @@
 		14C6C6501D624377000474E1 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				14C6C6541D624EFA000474E1 /* MapManager.swift */,
 				14C6C64D1D62436C000474E1 /* Constants.swift */,
 			);
 			name = Common;
+			sourceTree = "<group>";
+		};
+		14C6C6531D6248F8000474E1 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				14C6C6511D6248F3000474E1 /* SpriteComponent.swift */,
+			);
+			name = Components;
 			sourceTree = "<group>";
 		};
 		14D979911D5E5D8200ECD841 = {
@@ -82,12 +95,12 @@
 		14D9799C1D5E5D8200ECD841 /* CatInc */ = {
 			isa = PBXGroup;
 			children = (
+				14C6C6501D624377000474E1 /* Common */,
 				14D979A31D5E5D8200ECD841 /* GameScene.swift */,
 				14D979A51D5E5D8200ECD841 /* GameViewController.swift */,
-				14D979B91D5E7F9700ECD841 /* SpriteKit Specific */,
-				14D979BA1D5E7FA800ECD841 /* Supporting Files */,
 				14C6C64F1D624370000474E1 /* Entities */,
-				14C6C6501D624377000474E1 /* Common */,
+				14C6C6531D6248F8000474E1 /* Components */,
+				14D979BA1D5E7FA800ECD841 /* Supporting Files */,
 			);
 			path = CatInc;
 			sourceTree = "<group>";
@@ -105,6 +118,7 @@
 		14D979BA1D5E7FA800ECD841 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				14D979B91D5E7F9700ECD841 /* SpriteKit Specific */,
 				14D979B51D5E5F2500ECD841 /* Assets.xcassets */,
 				14D9799D1D5E5D8200ECD841 /* AppDelegate.swift */,
 				14D979A71D5E5D8200ECD841 /* Main.storyboard */,
@@ -195,6 +209,8 @@
 				14D979A41D5E5D8200ECD841 /* GameScene.swift in Sources */,
 				14D979A61D5E5D8200ECD841 /* GameViewController.swift in Sources */,
 				14C6C64C1D623F0D000474E1 /* Penguin.swift in Sources */,
+				14C6C6551D624EFA000474E1 /* MapManager.swift in Sources */,
+				14C6C6521D6248F3000474E1 /* SpriteComponent.swift in Sources */,
 				14D9799E1D5E5D8200ECD841 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
