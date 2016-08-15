@@ -52,7 +52,6 @@ class GameScene: SKScene {
       if validPath.count > 0 {
         self.penguinAllowedPath = validPath
         self.penguinPath = GKGridGraph(fromGridStartingAt: int2(0,0), width: cols, height: rows, diagonalsAllowed: false, nodeClass: GKGridGraphNode.self)
-//        self.penguinPath = GKGridGraph(nodes: validPath)
       }
     }
     
@@ -161,7 +160,7 @@ class GameScene: SKScene {
       
       // if spawn was found, it would be the first element in spawn<SKNode>
       if let foundSpawnNode: SKNode = spawn.first {
-        print("found spawn node")
+//        print("found spawn node")
         
         let currentLocation: CGPoint = foundSpawnNode.position
         let bounceUpAction: SKAction = SKAction.moveBy(x: 0.0, y: 10.0, duration: 0.1)
@@ -174,24 +173,21 @@ class GameScene: SKScene {
         foundSpawnNode.run(bounceSequence)
         
         // create the penguin
-        let newPenguin: SKSpriteNode = self.penguin.copy() as! SKSpriteNode
-        newPenguin.size = CGSize(width: foundSpawnNode.frame.size.width * 0.75, height: foundSpawnNode.frame.size.height * 0.75)
-//        newPenguin.position = CGPoint(x: (foundSpawnNode.position.x - foundSpawnNode.frame.size.width * 0.5), y: foundSpawnNode.position.y)
         let penguinSpawnPosition = CGPoint(
-          x: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.penguinPath!.gridHeight),
-          y: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.penguinPath!.gridWidth)
+          x: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.penguinPath!.gridWidth),
+          y: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.penguinPath!.gridHeight)
         )
         
         let spawnNodePosition = self.fullTileNode?.centerOfTile(atColumn: Int(penguinSpawnPosition.x), row: Int(penguinSpawnPosition.y))
-        newPenguin.position = spawnNodePosition!
-        self.addChild(newPenguin)
+        let newPenguin = Penguin(position: spawnNodePosition!)
+        self.addChild(newPenguin.spriteNode())
         
         
       }
       
-      for n in self.nodes(at: tappedLocation) {
-        print("Node: \(n)")
-      }
+//      for n in self.nodes(at: tappedLocation) {
+//        print("Node: \(n)")
+//      }
       
       self.touchDown(atPoint: t.location(in: self))
     }
