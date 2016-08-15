@@ -20,6 +20,9 @@ class GameScene: SKScene {
   
   var castleNode: SKNode!
   var spawnNode: SKNode!
+  var penguinPath: GKGridGraph<GKGridGraphNode>?
+  var penguinAllowedPath: [GKGridGraphNode]?
+  var fullTileNode: SKTileMapNode?
   
   let penguin: SKSpriteNode = SKSpriteNode(texture: SKTexture(imageNamed: "penguin"))
   
@@ -31,7 +34,30 @@ class GameScene: SKScene {
     self.castleNode = self.childNode(withName: "castleNode")
     self.spawnNode = self.childNode(withName: "spawnNode")
     
+    if let validRoadTiles = self.childNode(withName: "/Grass Node/Road") as? SKTileMapNode {
+      let cols = Int32(validRoadTiles.numberOfColumns)
+      let rows = Int32(validRoadTiles.numberOfRows)
+      self.fullTileNode = validRoadTiles
+      
+      var validPath: [GKGridGraphNode] = []
+//      var validGridGraph: GKGridGraph<GKGridGraphNode>?
+      for c in 0..<cols {
+        for r in 0..<rows {
+          if let _ = validRoadTiles.tileGroup(atColumn: Int(c), row: Int(r)) { // valid graph nodes
+            validPath.append(GKGridGraphNode(gridPosition: vector_int2(c, r)))
+          }
+        }
+      }
+      
+      if validPath.count > 0 {
+        self.penguinAllowedPath = validPath
+        self.penguinPath = GKGridGraph(fromGridStartingAt: int2(0,0), width: cols, height: rows, diagonalsAllowed: false, nodeClass: GKGridGraphNode.self)
+//        self.penguinPath = GKGridGraph(nodes: validPath)
+      }
+    }
+    
     // locating valid road tiles that penguins are allowed to walk over
+    /*
     if let grassTiles = self.childNode(withName: "Grass Node") as? SKTileMapNode {
       if let roadTiles = grassTiles.childNode(withName: "Road") as? SKTileMapNode {
         let cols = roadTiles.numberOfColumns
@@ -67,7 +93,7 @@ class GameScene: SKScene {
         }
       }
     }
-    
+    */
 //    if let castle: SKNode = self.childNode(withName: "castleNode") {
 //      print("\n\n\nfound castle: \(castle)\n\n\n")
 //    }
@@ -150,9 +176,17 @@ class GameScene: SKScene {
         // create the penguin
         let newPenguin: SKSpriteNode = self.penguin.copy() as! SKSpriteNode
         newPenguin.size = CGSize(width: foundSpawnNode.frame.size.width * 0.75, height: foundSpawnNode.frame.size.height * 0.75)
-        newPenguin.position = CGPoint(x: (foundSpawnNode.position.x - foundSpawnNode.frame.size.width * 0.5), y: foundSpawnNode.position.y)
+//        newPenguin.position = CGPoint(x: (foundSpawnNode.position.x - foundSpawnNode.frame.size.width * 0.5), y: foundSpawnNode.position.y)
+        let penguinSpawnPosition = CGPoint(
+          x: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.penguinPath!.gridHeight),
+          y: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.penguinPath!.gridWidth)
+        )
         
+        let spawnNodePosition = self.fullTileNode?.centerOfTile(atColumn: Int(penguinSpawnPosition.x), row: Int(penguinSpawnPosition.y))
+        newPenguin.position = spawnNodePosition!
         self.addChild(newPenguin)
+        
+        
       }
       
       for n in self.nodes(at: tappedLocation) {
