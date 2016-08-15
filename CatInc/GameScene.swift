@@ -18,8 +18,8 @@ class GameScene: SKScene {
   private var label : SKLabelNode?
   private var spinnyNode : SKShapeNode?
   
-  var castleNode: SKNode!
-  var spawnNode: SKNode!
+  var castle: Castle!
+  var spawn: SpawnPoint!
 
   let penguin: SKSpriteNode = SKSpriteNode(texture: SKTexture(imageNamed: "penguin"))
   var passableTerrainNode: SKTileMapNode?
@@ -29,10 +29,7 @@ class GameScene: SKScene {
     
     self.lastUpdateTime = 0
     self.createSpinnyNode()
-    
-    self.castleNode = self.childNode(withName: "castleNode")
-    self.spawnNode = self.childNode(withName: "spawnNode")
-    
+
     let mapper = MapManager(with: self)
     let terrainHelper = TerrainInspector(with: mapper)
     
@@ -42,6 +39,15 @@ class GameScene: SKScene {
       let pathTiles = terrainHelper.getPassableTerrainIndicies()
       if pathTiles.count > 0 {
         self.passableTerrainIndicies = pathTiles
+        let (castleSpawn, penguinSpawn) = terrainHelper.locatePointsOfInterest(indicies: pathTiles)
+        
+        let adjustedSpawnGridPosition = validRoadTiles.centerOfTile(atColumn: Int(penguinSpawn.x), row: Int(penguinSpawn.y))
+        let adjustedCastleGridPosition = validRoadTiles.centerOfTile(atColumn: Int(castleSpawn.x), row: Int(castleSpawn.y))
+        self.spawn = SpawnPoint(position: adjustedSpawnGridPosition)
+        self.castle = Castle(position: adjustedCastleGridPosition)
+        
+        self.addChild(self.spawn.spriteNode())
+        self.addChild(self.castle.spriteNode())
       }
     }
   }
@@ -97,23 +103,13 @@ class GameScene: SKScene {
       
       // locate the spawnNode in tapped location
       let spawn: [SKNode] = self.nodes(at: tappedLocation).filter({ (node) -> Bool in
-        if node == self.spawnNode { return true }
+        if node == self.spawn.spriteNode() { return true }
         return false
       })
       
       // if spawn was found, it would be the first element in spawn<SKNode>
-      if let foundSpawnNode: SKNode = spawn.first {
-//        print("found spawn node")
-        
-        let currentLocation: CGPoint = foundSpawnNode.position
-        let bounceUpAction: SKAction = SKAction.moveBy(x: 0.0, y: 10.0, duration: 0.1)
-        let boundDownAction: SKAction = SKAction.move(to: currentLocation, duration: 0.1)
-        bounceUpAction.timingMode = SKActionTimingMode.easeOut
-        boundDownAction.timingMode = SKActionTimingMode.easeIn
-        let bounceSequence: SKAction = SKAction.sequence([bounceUpAction, boundDownAction])
-        
-        // little bounce animation
-        foundSpawnNode.run(bounceSequence)
+      if let _: SKNode = spawn.first {
+        self.spawn.bounce()
         
         // create the penguin
         let penguinSpawnPosition = CGPoint(

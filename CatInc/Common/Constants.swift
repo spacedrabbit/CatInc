@@ -8,6 +8,16 @@
 
 import Foundation
 import UIKit
+import SpriteKit
 
 let StandardSizeCGFloat: CGFloat = 32.0
 let StandardSizeFloat: Float = Float(StandardSizeCGFloat)
+
+let StandardSpawnerSize: CGFloat = 64.0
+
+extension CGPoint {
+  init(int2: int2) {
+    x = CGFloat(int2.x)
+    y = CGFloat(int2.y)
+  }
+}

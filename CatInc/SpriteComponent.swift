@@ -23,3 +23,28 @@ class SpriteComponent: GKComponent {
     fatalError("init(coder:) has not been implemented")
   }
 }
+
+class BounceAnimationComponent: GKComponent {
+  let originalPosition: CGPoint
+  
+  internal init(originalPosition: CGPoint) {
+    self.originalPosition = originalPosition
+    super.init()
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  internal func animateBounce(node: SKNode) {
+    let bounceUpAction: SKAction = SKAction.moveBy(x: 0.0, y: 10.0, duration: 0.1)
+    let boundDownAction: SKAction = SKAction.move(to: self.originalPosition, duration: 0.1)
+    bounceUpAction.timingMode = SKActionTimingMode.easeOut
+    boundDownAction.timingMode = SKActionTimingMode.easeIn
+    let bounceSequence: SKAction = SKAction.sequence([bounceUpAction, boundDownAction])
+    
+    // little bounce animation
+    node.run(bounceSequence)
+  }
+  
+}

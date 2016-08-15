@@ -75,4 +75,9 @@ internal class TerrainInspector {
     }
     return validIndicies
   }
+  
+  internal func locatePointsOfInterest(indicies: [int2]) -> (castle: CGPoint, spawner: CGPoint) {
+    // for now, just statically return the valid nodes I know exist
+    return (CGPoint(x: 7, y: 9), CGPoint(x: 15, y: 5))
+  }
 }

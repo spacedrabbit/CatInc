@@ -53,11 +53,12 @@ internal class SpawnPoint: GKEntity, Spawnable {
   internal convenience init(position: CGPoint) {
     self.init()
     self.move(to: position)
+    self.addComponent(BounceAnimationComponent(originalPosition: position))
   }
   
   internal override init() {
     super.init()
-    self.addComponent(SpriteComponent(texture: self.texture))
+    self.addComponent(SpriteComponent(texture: self.texture, size: StandardSpawnerSize))
   }
   
   required init?(coder aDecoder: NSCoder) {
@@ -67,5 +68,33 @@ internal class SpawnPoint: GKEntity, Spawnable {
   internal func spriteNode() -> SKSpriteNode {
     return self.componentForClass(SpriteComponent.self)!.node
   }
+  
+  internal func bounce() {
+    let bounceComponent = self.componentForClass(BounceAnimationComponent.self)
+    bounceComponent?.animateBounce(node: self.spriteNode())
+  }
 
+}
+
+internal class Castle: GKEntity, Spawnable {
+  internal var texture: SKTexture = SKTexture(imageNamed: "castle")
+  
+  internal convenience init(position: CGPoint) {
+    self.init()
+    self.move(to: position)
+  }
+  
+  internal override init() {
+    super.init()
+    self.addComponent(SpriteComponent(texture: self.texture, size: StandardSpawnerSize))
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  internal func spriteNode() -> SKSpriteNode {
+    return self.componentForClass(SpriteComponent.self)!.node
+  }
+  
 }
