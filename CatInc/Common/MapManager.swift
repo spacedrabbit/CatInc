@@ -44,6 +44,7 @@ internal class MapManager {
 
 internal class TerrainInspector {
   let mapper: MapManager!
+  var traverseableTerrain: [GKGridGraphNode] = []
   
   required init(with mapper: MapManager) {
     self.mapper = mapper
@@ -59,8 +60,8 @@ internal class TerrainInspector {
     return nil
   }
   
-  internal func getPassableTerrainIndicies() -> [int2] {
-    var validIndicies: [int2] = []
+  internal func getPassableTerrainIndicies() -> [CGPoint] {
+    var validPoints: [CGPoint] = []
     if let validTileNode: SKTileMapNode = self.mapper.passableTerrainNode {
       let cols = Int32(validTileNode.numberOfColumns)
       let rows = Int32(validTileNode.numberOfRows)
@@ -68,15 +69,16 @@ internal class TerrainInspector {
       for c in 0..<cols {
         for r in 0..<rows {
           if let _ = validTileNode.tileGroup(atColumn: Int(c), row: Int(r)) {
-            validIndicies.append(int2(c, r))
+            validPoints.append(CGPoint(x: Int(c),y: Int(r)))
+            traverseableTerrain.append(GKGridGraphNode(gridPosition: vector_int2(c, r)))
           }
         }
       }
     }
-    return validIndicies
+    return validPoints
   }
   
-  internal func locatePointsOfInterest(indicies: [int2]) -> (castle: CGPoint, spawner: CGPoint) {
+  internal func locatePointsOfInterest(indicies: [CGPoint]) -> (castle: CGPoint, spawner: CGPoint) {
     // for now, just statically return the valid nodes I know exist
     return (CGPoint(x: 7, y: 9), CGPoint(x: 15, y: 5))
   }

@@ -20,18 +20,21 @@ class GameScene: SKScene {
   
   var castle: Castle!
   var spawn: SpawnPoint!
+  
+  var mapper: MapManager!
+  var terrainHelper: TerrainInspector!
 
   let penguin: SKSpriteNode = SKSpriteNode(texture: SKTexture(imageNamed: "penguin"))
   var passableTerrainNode: SKTileMapNode?
-  var passableTerrainIndicies: [int2] = []
+  var passableTerrainIndicies: [CGPoint] = []
   
   override func sceneDidLoad() {
     
     self.lastUpdateTime = 0
     self.createSpinnyNode()
 
-    let mapper = MapManager(with: self)
-    let terrainHelper = TerrainInspector(with: mapper)
+    self.mapper = MapManager(with: self)
+    self.terrainHelper = TerrainInspector(with: mapper)
     
     if let validRoadTiles = mapper.passableTerrainNode {
       self.passableTerrainNode = validRoadTiles
@@ -112,19 +115,43 @@ class GameScene: SKScene {
         self.spawn.bounce()
         
         // create the penguin
-        let penguinSpawnPosition = CGPoint(
-          x: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.passableTerrainNode!.numberOfColumns),
-          y: GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.passableTerrainNode!.numberOfRows)
-        )
+        let spawnPosition = self.passableTerrainIndicies[
+          GKARC4RandomSource.sharedRandom().nextInt(withUpperBound: self.passableTerrainIndicies.count)
+        ]
         
-        let spawnNodePosition = self.passableTerrainNode!.centerOfTile(atColumn: Int(penguinSpawnPosition.x), row: Int(penguinSpawnPosition.y))
+        let spawnNodePosition = self.passableTerrainNode!.centerOfTile(atColumn: Int(spawnPosition.x), row: Int(spawnPosition.y))
         let newPenguin = Penguin(position: spawnNodePosition)
         self.addChild(newPenguin.spriteNode())
+        
+        // these two values get the correct index values (6, 6)
+        let rowIndex = self.passableTerrainNode?.tileRowIndex(fromPosition: spawnNodePosition)
+        let colIndex = self.passableTerrainNode?.tileColumnIndex(fromPosition: spawnNodePosition)
+        
+        
+        // this iterration has no problem connecting all of the nodes
+        let specificGraph: GKGridGraph<GKGridGraphNode> = GKGridGraph(nodes: self.terrainHelper.traverseableTerrain)
+        if let specificGraphNodes = specificGraph.nodes {
+          for nodes in specificGraphNodes {
+            nodes.addConnections(to: specificGraphNodes, bidirectional: true)
+          }
+        }
+        
+        // these two node searches always fail. no matter the index values. 
+        // i guess its more accurate that node(atGridPosition:) always fails when the underlying GKGridGraph is made from 
+        // [GKGridGraphNode].
+        let thing = specificGraph.node(atGridPosition: vector_int2(Int32(spawnPosition.x), Int32(spawnPosition.y)))
+        let castleNode = specificGraph.node(atGridPosition: vector_int2(7, 9))
+
+        // HOWEVER: the below works! 
+        // specificGraph contains a list of all of its nodes, and can be accessed via its .nodes property. BUT
+        // only if you force typecast the collection element to GKGridGraphNode. Otherwise, it will also fail.
+        // MOREOVER: each of these GKGridGraphNode's knows their gridPosition!!!! so how is it that the GKGridGraph has
+        // knowledge of its nodes, which have knowledge of their grid positions, but if you query the GKGripGraph for 
+        // a node using node(atGridPosition:) it will always return nil?
+        let solutionPath = specificGraph.findPath(from: specificGraph.nodes![0] as! GKGridGraphNode, to: specificGraph.nodes![20] as! GKGridGraphNode)
+        
+        print("Solution: \(solutionPath)")
       }
-      
-//      for n in self.nodes(at: tappedLocation) {
-//        print("Node: \(n)")
-//      }
       
       self.touchDown(atPoint: t.location(in: self))
     }
